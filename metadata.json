@@ -1,5 +1,5 @@
 {
-  "name": "AppStore Availability Checker",
-  "description": "Check if an iOS app is available across all 175+ Apple App Store countries with a single click.",
+  "name": "Storefront Scout",
+  "description": "Professional tool to check iOS app availability across 175 Apple App Store regions instantly.",
   "requestFramePermissions": []
 }
