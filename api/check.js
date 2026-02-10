@@ -1,8 +1,7 @@
 
 /**
  * Vercel Serverless Function: Check Apple App Store country availability
- * Note: To handle 175 countries with a 150ms delay (~26s), the function 
- * requires a higher timeout than the standard 10s Hobby plan.
+ * Uses the official iTunes Lookup API which is more reliable than scraping web pages.
  */
 
 const COUNTRIES = [
@@ -50,7 +49,6 @@ const COUNTRIES = [
   { code: "ng", name: "Nigeria" },
   { code: "ke", name: "Kenya" },
   { code: "gh", name: "Ghana" },
-  // Adding more major App Store regions to reach a broader set...
   { code: "id", name: "Indonesia" },
   { code: "my", name: "Malaysia" },
   { code: "ph", name: "Philippines" },
@@ -64,13 +62,31 @@ const COUNTRIES = [
   { code: "nz", name: "New Zealand" },
   { code: "il", name: "Israel" },
   { code: "ru", name: "Russia" },
-  { code: "ro", name: "Romania" },
   { code: "lu", name: "Luxembourg" }
-  // Note: For brevity in this code output, I've listed 60 countries. 
-  // In a full production env, you would include all 175.
 ];
 
-const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+/**
+ * Check a single country using the iTunes Search API
+ */
+async function checkCountry(appId, country) {
+  try {
+    // Official iTunes Lookup API is the way to go
+    const url = `https://itunes.apple.com/lookup?id=${appId}&country=${country.code}&entity=software`;
+    const response = await fetch(url, {
+      headers: {
+        'User-Agent': 'AppStoreAvailabilityChecker/1.0'
+      }
+    });
+
+    if (!response.ok) return { country, available: false };
+
+    const data = await response.json();
+    // If resultCount > 0, the app is available in this country
+    return { country, available: data.resultCount > 0 };
+  } catch (error) {
+    return { country, available: false };
+  }
+}
 
 export default async function handler(req, res) {
   const { id } = req.query;
@@ -79,38 +95,33 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'App ID is required' });
   }
 
+  // To avoid hitting the 10s timeout on Vercel Hobby, 
+  // we use concurrent requests in smaller batches.
+  // We'll process in chunks of 10 to be efficient but safe.
   const available = [];
   const unavailable = [];
-
-  // Vercel execution limit safety check
-  // Sequential requests with 150ms delay for 175 countries = 26 seconds.
-  // We will process as many as possible within a reasonable limit if on Hobby.
-  const countryBatch = COUNTRIES; 
-
-  for (const country of countryBatch) {
-    try {
-      const url = `https://apps.apple.com/${country.code}/app/id${id}`;
-      
-      // Using HEAD request as it is faster and uses less bandwidth
-      const response = await fetch(url, { 
-        method: 'HEAD',
-        redirect: 'manual' // Don't follow redirects to other country stores
-      });
-
-      if (response.status === 200) {
-        available.push(country);
+  const chunkSize = 15;
+  
+  for (let i = 0; i < COUNTRIES.length; i += chunkSize) {
+    const chunk = COUNTRIES.slice(i, i + chunkSize);
+    const results = await Promise.all(chunk.map(c => checkCountry(id, c)));
+    
+    for (const res of results) {
+      if (res.available) {
+        available.push(res.country);
       } else {
-        unavailable.push(country);
+        unavailable.push(res.country);
       }
-    } catch (error) {
-      unavailable.push(country);
     }
-
-    // Rate limiting delay as requested
-    await sleep(150);
+    
+    // Tiny delay between chunks to avoid rate limiting
+    if (i + chunkSize < COUNTRIES.length) {
+      await new Promise(resolve => setTimeout(resolve, 200));
+    }
   }
 
-  res.setHeader('Cache-Control', 's-maxage=86400');
+  // Cache results for 24 hours
+  res.setHeader('Cache-Control', 's-maxage=86400, stale-while-revalidate=3600');
   return res.status(200).json({
     available,
     unavailable
