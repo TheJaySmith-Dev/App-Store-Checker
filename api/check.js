@@ -1,9 +1,10 @@
 
 /**
- * Vercel Serverless Function: Storefront Scout
+ * Vercel Serverless Function: AppRegions
  * Uses official iTunes Lookup API for high accuracy.
  */
 
+// AUDITED UNIQUE REGIONS: 170 total.
 const COUNTRIES = [
   { code: "af", name: "Afghanistan" },
   { code: "al", name: "Albania" },
@@ -44,7 +45,7 @@ const COUNTRIES = [
   { code: "cn", name: "China Mainland" },
   { code: "co", name: "Colombia" },
   { code: "cg", name: "Congo, Republic of the" },
-  { code: "cd", name: "Congo, Democratic Republic of" },
+  { code: "cd", name: "Congo, Democratic Republic of the" },
   { code: "cr", name: "Costa Rica" },
   { code: "ci", name: "Côte d'Ivoire" },
   { code: "hr", name: "Croatia" },
@@ -194,7 +195,7 @@ async function checkCountry(appId, country) {
     
     const response = await fetch(url, {
       headers: {
-        'User-Agent': 'StorefrontScout/1.4'
+        'User-Agent': 'AppRegions/1.0'
       }
     });
 
@@ -217,7 +218,6 @@ export default async function handler(req, res) {
   const available = [];
   const unavailable = [];
   
-  // Sorting COUNTRIES by name for consistent UI results
   const sortedCountries = [...COUNTRIES].sort((a, b) => a.name.localeCompare(b.name));
   
   const chunkSize = 60; 

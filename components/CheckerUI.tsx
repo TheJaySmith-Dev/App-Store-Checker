@@ -52,16 +52,16 @@ export const CheckerUI: React.FC<CheckerUIProps> = ({ onCheck, isLoading }) => {
             {isLoading ? (
               <>
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                Scouting...
+                Checking...
               </>
             ) : (
-              'Scout Stores'
+              'Check Regions'
             )}
           </button>
         </div>
         {error && <p className="text-red-500 text-sm ml-4 font-medium animate-pulse">{error}</p>}
         <p className="text-xs text-gray-400 text-center">
-          Searching across 175 storefronts. Results arrive in ~5-8 seconds.
+          Searching across 170 regions. Results arrive in ~5-8 seconds.
         </p>
       </form>
     </div>

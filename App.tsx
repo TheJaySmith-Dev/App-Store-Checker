@@ -51,12 +51,14 @@ const App: React.FC = () => {
     <div className="max-w-6xl mx-auto px-4 py-12 md:py-20">
       <header className="flex justify-between items-center mb-12">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/30">
-            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 4L9 7" />
-            </svg>
+          <div className="w-10 h-10 bg-white dark:bg-[#1C1C1E] rounded-xl flex items-center justify-center shadow-lg overflow-hidden border border-gray-100 dark:border-gray-800">
+            <img 
+              src="https://i.ibb.co/prd58tMg/23-DC366-F-B1-E6-47-EC-8-ED8-50-C86-A399-C5-D.png" 
+              alt="AppRegions Logo" 
+              className="w-full h-full object-cover"
+            />
           </div>
-          <h1 className="text-2xl font-bold tracking-tight">Storefront Scout</h1>
+          <h1 className="text-2xl font-bold tracking-tight">AppRegions</h1>
         </div>
         
         <button 
@@ -76,7 +78,7 @@ const App: React.FC = () => {
         <section className="text-center space-y-4 max-w-2xl mx-auto">
           <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight">Global App Check</h2>
           <p className="text-lg text-gray-500 dark:text-gray-400 font-medium">
-            Paste an App Store link to scout availability across 175 regions instantly.
+            Paste an App Store link to check availability across 170 regions instantly.
           </p>
         </section>
 
@@ -100,7 +102,7 @@ const App: React.FC = () => {
       </main>
 
       <footer className="mt-32 pt-12 border-t border-gray-200 dark:border-gray-800 text-center text-sm text-gray-500">
-        <p>© {new Date().getFullYear()} Storefront Scout. Professional App Store Intelligence.</p>
+        <p>© {new Date().getFullYear()} AppRegions. Professional App Store Intelligence.</p>
       </footer>
     </div>
   );

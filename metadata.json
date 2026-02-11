@@ -1,5 +1,5 @@
 {
-  "name": "Storefront Scout",
-  "description": "Professional tool to check iOS app availability across 175 Apple App Store regions instantly.",
+  "name": "AppRegions",
+  "description": "Professional tool to check iOS app availability across 170 Apple App Store regions instantly.",
   "requestFramePermissions": []
 }
